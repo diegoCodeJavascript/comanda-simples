@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comanda Simples</title>
+    <style>
+        /* Estilos Básicos */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            padding-bottom: 60px; /* Para o rodapé */
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        header img {
+            height: 50px;
+            margin-right: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .sub-header {
+            text-align: center;
+            padding: 10px;
+            background-color: #555;
+            color: #fff;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        /* Botões */
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #555;
+        }
+
+        /* Modal */
+        .modal {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+        }
+
+        /* Formulário */
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            position: relative;
+            background-color: #fafafa;
+        }
+
+        .remove-item {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .remove-item:hover {
+            background-color: #c0392b;
+        }
+
+        /* Tabela */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            header img {
+                margin-bottom: 10px;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+
+            /* Tabelas Responsivas */
+            .table-container {
+                max-height: 300px; /* Define uma altura máxima para a tabela */
+                overflow-y: auto; /* Adiciona a barra de rolagem vertical */
+                margin-bottom: 10px; /* Espaço entre a tabela e o total */
+            }
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            th {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                margin-bottom: 20px;
+            }
+
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+
+            td:before {
+                position: absolute;
+                top: 12px;
+                left: 10px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+            }
+
+            /* Labels para cada coluna na tabela */
+            #ordersTable tr td:nth-of-type(1):before { content: "ID"; }
+            #ordersTable tr td:nth-of-type(2):before { content: "Cliente"; }
+            #ordersTable tr td:nth-of-type(3):before { content: "CPF"; }
+            #ordersTable tr td:nth-of-type(4):before { content: "Mesa"; }
+            #ordersTable tr td:nth-of-type(5):before { content: "Data/Hora"; }
+            #ordersTable tr td:nth-of-type(6):before { content: "Total do Pedido"; }
+            #ordersTable tr td:nth-of-type(7):before { content: "Ações"; }
+
+            #viewOrdersBody tr td:nth-of-type(1):before { content: "ID"; }
+            #viewOrdersBody tr td:nth-of-type(2):before { content: "Cliente"; }
+            #viewOrdersBody tr td:nth-of-type(3):before { content: "CPF"; }
+            #viewOrdersBody tr td:nth-of-type(4):before { content: "Mesa"; }
+            #viewOrdersBody tr td:nth-of-type(5):before { content: "Data/Hora"; }
+            #viewOrdersBody tr td:nth-of-type(6):before { content: "Total do Pedido"; }
+
+            #viewItemsBody tr td:nth-of-type(1):before { content: "Produto"; }
+            #viewItemsBody tr td:nth-of-type(2):before { content: "Valor (R$)"; }
+            #viewItemsBody tr td:nth-of-type(3):before { content: "Quantidade"; }
+            #viewItemsBody tr td:nth-of-type(4):before { content: "Total (R$)"; }
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            font-size: 14px;
+        }
+
+        /* Total Geral */
+        .total-geral {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* Melhorias Adicionais */
+        h2, h3 {
+            margin-top: 0;
+        }
+
+        /* Adicionando barra de rolagem no desktop */
+        @media (min-width: 769px) {
+            .table-container {
+                max-height: 400px; /* Define uma altura máxima para a tabela no desktop */
+                overflow-y: auto; /* Adiciona a barra de rolagem vertical */
+                margin-bottom: 10px; /* Espaço entre a tabela e o total */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header>
+        <img src="logotipo.jpg" alt="Logotipo">
+        <h1>Comanda Simples</h1>
+    </header>
+
+    <div class="sub-header">
+        <h2>Gerenciador de Basic Comanda de Lanchonete</h2>
+    </div>
+
+    <!-- Container Principal -->
+    <div class="container">
+        <!-- Botões -->
+        <button class="btn" id="openOrderBtn">Abrir Pedido</button>
+        <button class="btn" id="viewOrdersBtn">Pedidos Abertos</button>
+
+        <!-- Área de Pedidos -->
+        <div id="ordersArea">
+            <!-- Container com barra de rolagem -->
+            <div class="table-container">
+                <!-- Tabela de Pedidos -->
+                <table id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>CPF</th>
+                            <th>Mesa</th>
+                            <th>Data/Hora</th>
+                            <th>Total do Pedido</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Pedidos serão adicionados aqui -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Total Geral de Todos os Pedidos -->
+            <div class="total-geral" id="totalGeral">Total de Todos os Pedidos: R$ 0,00</div>
+        </div>
+    </div>
+
+    <!-- Modal de Adicionar Pedido -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeOrderModal">&times;</span>
+            <h2>Novo Pedido</h2>
+            <form id="orderForm">
+                <label for="cliente">Nome do Cliente:</label>
+                <input type="text" id="cliente" name="cliente" required>
+
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf">
+
+                <label for="mesa">Nome da Mesa:</label>
+                <input type="text" id="mesa" name="mesa" required>
+
+                <h3>Itens do Pedido</h3>
+                <div id="itemsContainer">
+                    <div class="item">
+                        <button type="button" class="remove-item" onclick="removeItem(this)">Remover</button>
+                        <label>Nome do Produto:</label>
+                        <input type="text" name="produto" required>
+
+                        <label>Valor (R$):</label>
+                        <input type="number" name="valor" step="0.01" required>
+
+                        <label>Quantidade:</label>
+                        <input type="number" name="quantidade" min="1" required>
+                    </div>
+                </div>
+                <button type="button" class="btn" onclick="addItem()">Adicionar Item</button>
+                <br>
+                <button type="submit" class="btn">Registrar Pedido</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Visualizar Pedidos -->
+    <div id="viewOrdersModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeViewOrdersModal">&times;</span>
+            <h2>Pedidos Abertos</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>CPF</th>
+                            <th>Mesa</th>
+                            <th>Data/Hora</th>
+                            <th>Total do Pedido</th>
+                        </tr>
+                    </thead>
+                    <tbody id="viewOrdersBody">
+                        <!-- Pedidos abertos serão exibidos aqui -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="total-geral" id="viewTotalGeral">Total de Todos os Pedidos: R$ 0,00</div>
+        </div>
+    </div>
+
+    <!-- Modal de Visualizar Itens de um Pedido -->
+    <div id="viewItemsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeViewItemsModal">&times;</span>
+            <h2>Itens do Pedido <span id="viewOrderId"></span></h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Valor (R$)</th>
+                        <th>Quantidade</th>
+                        <th>Total (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="viewItemsBody">
+                    <!-- Itens do pedido serão exibidos aqui -->
+                </tbody>
+            </table>
+            <div class="total-geral" id="viewItemsTotal">Total do Pedido: R$ 0,00</div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer>
+        Desenvolvido por Diego Lamana
+    </footer>
+
+    <!-- Scripts JavaScript -->
+    <script>
+        // Array para armazenar os pedidos
+        let pedidos = [];
+
+        // Elementos do DOM
+        const openOrderBtn = document.getElementById('openOrderBtn');
+        const orderModal = document.getElementById('orderModal');
+        const closeOrderModal = document.getElementById('closeOrderModal');
+        const orderForm = document.getElementById('orderForm');
+        const itemsContainer = document.getElementById('itemsContainer');
+
+        const ordersTableBody = document.querySelector('#ordersTable tbody');
+        const totalGeral = document.getElementById('totalGeral');
+
+        const viewOrdersBtn = document.getElementById('viewOrdersBtn');
+        const viewOrdersModal = document.getElementById('viewOrdersModal');
+        const closeViewOrdersModal = document.getElementById('closeViewOrdersModal');
+        const viewOrdersBody = document.getElementById('viewOrdersBody');
+        const viewTotalGeral = document.getElementById('viewTotalGeral');
+
+        const viewItemsModal = document.getElementById('viewItemsModal');
+        const closeViewItemsModal = document.getElementById('closeViewItemsModal');
+        const viewItemsBody = document.getElementById('viewItemsBody');
+        const viewOrderId = document.getElementById('viewOrderId');
+        const viewItemsTotal = document.getElementById('viewItemsTotal');
+
+        let orderIdCounter = 1; // Contador para IDs dos pedidos
+
+        // Função para abrir o modal de adicionar pedido
+        openOrderBtn.onclick = () => {
+            orderModal.style.display = 'block';
+        };
+
+        // Função para fechar o modal de adicionar pedido
+        closeOrderModal.onclick = () => {
+            orderModal.style.display = 'none';
+        };
+
+        // Função para fechar o modal de visualizar pedidos
+        closeViewOrdersModal.onclick = () => {
+            viewOrdersModal.style.display = 'none';
+        };
+
+        // Função para fechar o modal de visualizar itens
+        closeViewItemsModal.onclick = () => {
+            viewItemsModal.style.display = 'none';
+        };
+
+        // Fechar modais ao clicar fora deles
+        window.onclick = function(event) {
+            if (event.target == orderModal) {
+                orderModal.style.display = 'none';
+            }
+            if (event.target == viewOrdersModal) {
+                viewOrdersModal.style.display = 'none';
+            }
+            if (event.target == viewItemsModal) {
+                viewItemsModal.style.display = 'none';
+            }
+        };
+
+        // Função para adicionar um novo item ao pedido
+        function addItem() {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            itemDiv.innerHTML = `
+                <button type="button" class="remove-item" onclick="removeItem(this)">Remover</button>
+                <label>Nome do Produto:</label>
+                <input type="text" name="produto" required>
+
+                <label>Valor (R$):</label>
+                <input type="number" name="valor" step="0.01" required>
+
+                <label>Quantidade:</label>
+                <input type="number" name="quantidade" min="1" required>
+            `;
+            itemsContainer.appendChild(itemDiv);
+        }
+
+        // Função para remover um item do pedido
+        function removeItem(button) {
+            const itemDiv = button.parentElement;
+            itemsContainer.removeChild(itemDiv);
+        }
+
+        // Função para formatar número como moeda
+        function formatarMoeda(valor) {
+            return 'R$ ' + parseFloat(valor).toFixed(2).replace('.', ',');
+        }
+
+        // Função para atualizar a tabela de pedidos
+        function atualizarTabela() {
+            // Limpar tabela
+            ordersTableBody.innerHTML = '';
+            let totalGeralPedidos = 0;
+
+            pedidos.forEach((pedido, index) => {
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td>${pedido.id}</td>
+                    <td>${pedido.cliente}</td>
+                    <td>${pedido.cpf || '-'}</td>
+                    <td>${pedido.mesa}</td>
+                    <td>${pedido.dataHora}</td>
+                    <td>${formatarMoeda(pedido.total)}</td>
+                    <td>
+                        <button class="btn" onclick="viewOrder(${index})">Visualizar</button>
+                        <button class="btn" onclick="apagarPedido(${index})">Apagar</button>
+                    </td>
+                `;
+
+                ordersTableBody.appendChild(tr);
+                totalGeralPedidos += pedido.total;
+            });
+
+            totalGeral.textContent = `Total de Todos os Pedidos: ${formatarMoeda(totalGeralPedidos)}`;
+        }
+
+        // Função para apagar um pedido
+        function apagarPedido(index) {
+            if(confirm('Tem certeza que deseja apagar este pedido?')) {
+                pedidos.splice(index, 1);
+                atualizarTabela();
+            }
+        }
+
+        // Função para lidar com o envio do formulário
+        orderForm.onsubmit = function(e) {
+            e.preventDefault();
+
+            const cliente = document.getElementById('cliente').value.trim();
+            const cpf = document.getElementById('cpf').value.trim();
+            const mesa = document.getElementById('mesa').value.trim();
+
+            // Coletar itens
+            const itens = [];
+            const itemsDiv = itemsContainer.querySelectorAll('.item');
+            for (let item of itemsDiv) {
+                const produto = item.querySelector('input[name="produto"]').value.trim();
+                const valor = parseFloat(item.querySelector('input[name="valor"]').value);
+                const quantidade = parseInt(item.querySelector('input[name="quantidade"]').value);
+
+                if (!produto || isNaN(valor) || isNaN(quantidade)) {
+                    alert('Por favor, preencha todas as informações dos itens corretamente.');
+                    return;
+                }
+
+                const total = valor * quantidade;
+                itens.push({ produto, valor, quantidade, total });
+            }
+
+            if (itens.length === 0) {
+                alert('Adicione pelo menos um item ao pedido.');
+                return;
+            }
+
+            // Calcular total do pedido
+            const totalPedido = itens.reduce((acc, item) => acc + item.total, 0);
+
+            // Data e hora atual
+            const dataHora = new Date();
+            const dataHoraFormatada = dataHora.toLocaleString('pt-BR', { 
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
+
+            // Criar novo pedido
+            const novoPedido = {
+                id: orderIdCounter++,
+                cliente,
+                cpf, // CPF agora é opcional
+                mesa,
+                dataHora: dataHoraFormatada,
+                itens,
+                total: totalPedido
+            };
+
+            // Adicionar ao array de pedidos
+            pedidos.push(novoPedido);
+            atualizarTabela();
+
+            // Resetar o formulário
+            orderForm.reset();
+
+            // Remover todos os itens além do primeiro
+            while (itemsContainer.children.length > 1) {
+                itemsContainer.removeChild(itemsContainer.lastChild);
+            }
+
+            // Fechar o modal
+            orderModal.style.display = 'none';
+        };
+
+        // Função para visualizar um pedido específico
+        function viewOrder(index) {
+            const pedido = pedidos[index];
+            viewOrderId.textContent = `#${pedido.id}`;
+
+            // Limpar tabela de itens
+            viewItemsBody.innerHTML = '';
+            let totalPedido = 0;
+
+            pedido.itens.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.produto}</td>
+                    <td>${formatarMoeda(item.valor)}</td>
+                    <td>${item.quantidade}</td>
+                    <td>${formatarMoeda(item.total)}</td>
+                `;
+                viewItemsBody.appendChild(tr);
+                totalPedido += item.total;
+            });
+
+            viewItemsTotal.textContent = `Total do Pedido: ${formatarMoeda(totalPedido)}`;
+
+            viewItemsModal.style.display = 'block';
+        }
+
+        // Função para visualizar todos os pedidos abertos
+        viewOrdersBtn.onclick = () => {
+            viewOrdersBody.innerHTML = '';
+            let totalGeralPedidos = 0;
+
+            pedidos.forEach((pedido, index) => {
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td>${pedido.id}</td>
+                    <td>${pedido.cliente}</td>
+                    <td>${pedido.cpf || '-'}</td>
+                    <td>${pedido.mesa}</td>
+                    <td>${pedido.dataHora}</td>
+                    <td>${formatarMoeda(pedido.total)}</td>
+                `;
+
+                viewOrdersBody.appendChild(tr);
+                totalGeralPedidos += pedido.total;
+            });
+
+            viewTotalGeral.textContent = `Total de Todos os Pedidos: ${formatarMoeda(totalGeralPedidos)}`;
+            viewOrdersModal.style.display = 'block';
+        };
+
+        // Inicialização
+        atualizarTabela();
+    </script>
+</body>
+</html>
